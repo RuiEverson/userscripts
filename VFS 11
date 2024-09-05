@@ -1,0 +1,222 @@
+// ==UserScript==
+// @name         Vfs Portugal 11
+// @namespace    http://Userscripts.net/
+// @version      0.8
+// @description  Script de automação para VFS Portugal
+// @author       Rody
+// @match        https://row1.vfsglobal.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var Email, Pwd, NumPass, DateN, ExpPass, Prenom, Nom, Genre, Phone, Interval, Visa, Ref, Country, CounTxt, MsgTxt, Txt, Gender, VisaNum, VisaPlace, VisaDur;
+    var Dora = 1;
+
+    Country = 0;
+    Email = ""; // Email
+    Pwd = ""; // mot de passe vfs
+    Phone = "928775328"; // numero téléphone
+    Gender = ["", 'Male', 'Female']; // 1 masculin, 2 Feminin
+    var VisaType = null;
+    var RefNum = "";
+
+    var Profiles = ["MARIA NKUNGA", "MANUEL PEDRO", "FRANCISCO SIMAO", "DORCA KAMBANDA", "MAMADOU BAH", "ALPHA BAH", "EVALDO LOBATO"];
+
+    var inter = 6; // Intervalle en secondes pour rafraîchir la page et sélectionner type de visa
+    var visa1 = 5955; // Type de visa 1
+    var visa2 = 5956; // Type de visa 2
+
+   function setForm() {
+        switch (Dora) {
+            case 1:
+                // Profile 1
+                NumPass = "N3275431";
+                DateN = "04/03/1999";
+                ExpPass = "16/05/2034";
+                Prenom = "MARIA";
+                Nom = "NKUNGA";
+                Genre = 2;
+                break;
+            case 2:
+                // Profile 2
+                NumPass = "N3402613";
+                DateN = "20/07/1964";
+                ExpPass = "03/06/2025";
+                Prenom = "MANUEL";
+                Nom = "PEDRO";
+                Genre = 1;
+                break;
+            case 3:
+                // Profile 3
+                NumPass = "N3375696";
+                DateN = "12/10/1987";
+                ExpPass = "29/07/2039";
+                Prenom = "FRANCISCO";
+                Nom = "SIMÃO";
+                Genre = 1;
+                break;
+            case 4:
+                // Profile 4
+                NumPass = "N3290636";
+                DateN = "04/05/2000";
+                ExpPass = "27/05/2029";
+                Prenom = "DORCA";
+                Nom = "KAMBANDA";
+                Genre = 2;
+                break;
+            case 5:
+                // Profile 5
+                NumPass = "O05127640";
+                DateN = "21/07/1990";
+                ExpPass = "18/08/2033";
+                Prenom = "MAMADOU";
+                Nom = "BAH";
+                Genre = 1;
+                break;
+            case 6:
+                // Profile 6
+                NumPass = "O05167640";
+                DateN = "01/04/2001";
+                ExpPass = "02/01/2034";
+                Prenom = "ALPHA";
+                Nom = "BAH";
+                Genre = 1;
+                break;
+            case 7:
+                // Profile 7
+                NumPass = "N3330736";
+                DateN = "18/07/1978";
+                ExpPass = "21/06/2039";
+                Prenom = "EVALDO";
+                Nom = "LOBATO";
+                Genre = 1;
+                break;
+            default:
+                alert('Erreur Script VFS');
+                break;
+        }
+        document.title = Prenom + ' ' + Nom;
+    }
+
+    function addButton(i, index) {
+        $('#sidebar').append('<button type="button" style="width: 100%; height: 50px;background-color:#2F4F4F;border:0;font-size: 1.4em;margin-bottom: 10px;color:#fff;" id="Pro' + (index + 1) + '">' + i + '</button>');
+    }
+
+    function shiftDesign() {
+        $('body').prepend('<h5 id="Alert" style="color: red; text-align: center; text-transform: uppercase;background-color: teal;">Aucune Notification</h5>');
+        $('#header-title').css('margin', '2px');
+        $('.header').height('40px');
+        $('.logo').hide();
+        $('.MsoNormal').hide();
+    }
+
+    function fillForm() {
+        $("#PassportNumber").val(NumPass);
+        $("#FirstName").val(Prenom);
+        $("#LastName").val(Nom);
+        $("#DateOfBirth").val(DateN);
+        $("#PassportExpiryDate").val(ExpPass);
+        $("#NationalityId option:contains('ANGOLA')").attr('selected', 'selected');
+        $("#GenderId option:contains('" + Gender[Genre] + "')").attr('selected', 'selected');
+        if ($('#VisaNumber').length) {
+            $('#VisaNumber').val(VisaNum);
+        }
+        if ($('#PlaceOfIssuance').length) {
+            $('#PlaceOfIssuance').val(VisaPlace);
+        }
+        if ($('#Duartion').length) {
+            $('#Duartion').val(VisaDur);
+        }
+        if ($('#Mobile').length) {
+            $('#Mobile').val(Phone);
+        }
+        if ($('#txtPassport').length) {
+            $("#AURN").val(RefNum);
+            $("#txtPassport").val(NumPass);
+            $("#PrimaryEmailId").val(Email);
+        }
+        //$('#submitbuttonId').click();
+    }
+
+    function checkAvailability() {
+        var visa1Available = $('#category5955Status').text() !== ''; // Substitua pelo seletor real
+        var visa2Available = $('#category5956Status').text() !== ''; // Substitua pelo seletor real
+
+        if (visa1Available || visa2Available) {
+            var MsgTxt = new SpeechSynthesisUtterance('Vagas disponíveis');
+            window.speechSynthesis.speak(MsgTxt);
+            $('#btnContinue').click();
+        }
+
+    }
+
+    // Add buttons and event handlers
+    $('#sidebar').append('<hr>');
+    Profiles.forEach(addButton);
+
+    $('#sidebar').on('click','#Pro1',function(){
+        Dora = 1;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro2',function(){
+        Dora = 2;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro3',function(){
+        Dora = 3;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro4',function(){
+        Dora = 4;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro5',function(){
+        Dora = 5;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro6',function(){
+        Dora = 6;
+        setForm();
+        fillForm();
+    });
+    $('#sidebar').on('click','#Pro7',function(){
+        Dora = 7;
+        setForm();
+        fillForm();
+    });
+
+    // Initialization
+    (function() {
+        document.title = Prenom + ' ' + Nom;
+        if ($('#EmailId').length && $('#Password').length) {
+            $('#EmailId').val(Email);
+            $('#Password').val(Pwd);
+        }
+
+        // Alternar entre as categorias de visto
+        function checkBothVisas() {
+            $('#VisaCategoryId').val(visa1).change();
+            setTimeout(function() {
+                checkAvailability();
+                $('#VisaCategoryId').val(visa2).change();
+                setTimeout(checkAvailability, 20000); // Aguarde 5 segundos para a segunda verificação
+            }, 15000); // Aguarde 5 segundos antes de verificar a primeira categoria
+        }
+
+        var refresh = setInterval(checkBothVisas, inter * 1000);
+
+        if ($('#lblDate').text() != '') {
+            clearInterval(refresh);
+            var MsgTxt = new SpeechSynthesisUtterance('Rdv France disponível');
+            window.speechSynthesis.speak(MsgTxt);
+            $('#btnContinue').click();
+        }
+    })();
+})();
